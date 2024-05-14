@@ -1,0 +1,317 @@
+[
+    {
+        "id": "93fa6dbdaeec3dd2",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1bee97cab78f2254",
+        "type": "debug",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "debug 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "f15d022c745f4874",
+        "type": "inject",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "Cảm biến random",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "30",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "0.5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 80,
+        "wires": [
+            [
+                "92cdd03decb0f73a"
+            ]
+        ]
+    },
+    {
+        "id": "0f1a11ce964e6cf9",
+        "type": "function",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "I History",
+        "func": "var json = JSON.parse(msg.payload);\nmsg.payload = `INSERT INTO history (sid, value) VALUES ('demo',${json.data})`\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 40,
+        "wires": [
+            [
+                "f714a9850761556e"
+            ]
+        ]
+    },
+    {
+        "id": "f714a9850761556e",
+        "type": "MSSQL",
+        "z": "93fa6dbdaeec3dd2",
+        "mssqlCN": "7bfaa1b5276d6ed6",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 680,
+        "y": 40,
+        "wires": [
+            [
+                "1bee97cab78f2254"
+            ]
+        ]
+    },
+    {
+        "id": "92cdd03decb0f73a",
+        "type": "http request",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://localhost:8000/demo",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 330,
+        "y": 80,
+        "wires": [
+            [
+                "0f1a11ce964e6cf9",
+                "d059fda01b22425c"
+            ]
+        ]
+    },
+    {
+        "id": "4ae65020bdb10b8d",
+        "type": "debug",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "debug 7",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "72cc28f54c148f91",
+        "type": "MSSQL",
+        "z": "93fa6dbdaeec3dd2",
+        "mssqlCN": "7bfaa1b5276d6ed6",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 680,
+        "y": 140,
+        "wires": [
+            [
+                "4ae65020bdb10b8d"
+            ]
+        ]
+    },
+    {
+        "id": "d059fda01b22425c",
+        "type": "function",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "U Now",
+        "func": "var json = JSON.parse(msg.payload);\nmsg.payload = `UPDATE Sensor SET value = '${json.data}', time_update = getdate() WHERE sid = 'demo';`\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 140,
+        "wires": [
+            [
+                "72cc28f54c148f91"
+            ]
+        ]
+    },
+    {
+        "id": "fc65e09910af1395",
+        "type": "MSSQL",
+        "z": "93fa6dbdaeec3dd2",
+        "mssqlCN": "7bfaa1b5276d6ed6",
+        "name": "",
+        "query": "",
+        "outField": "payload",
+        "x": 920,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9c01419b7bfe4b17",
+        "type": "http request",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://localhost:8000/soxo?data_query={{{query}}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 320,
+        "wires": [
+            [
+                "d2840b1bb75106f6"
+            ]
+        ]
+    },
+    {
+        "id": "a4b51d1d4df6e695",
+        "type": "change",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "query",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 380,
+        "y": 320,
+        "wires": [
+            [
+                "9c01419b7bfe4b17"
+            ]
+        ]
+    },
+    {
+        "id": "07c73dc5069bf33d",
+        "type": "inject",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "Lấy giải đặc biệt mới nhất",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "0.5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 240,
+        "wires": [
+            [
+                "4df3f3e76dd2b8a6"
+            ]
+        ]
+    },
+    {
+        "id": "4df3f3e76dd2b8a6",
+        "type": "function",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "Chế target_query",
+        "func": "// Lấy ngày hiện tại\nconst today = new Date();\n\n// Lấy ngày, tháng, năm từ đối tượng Date\nvar day = String(today.getDate()).padStart(2, '0');\nconst month = String(today.getMonth() + 1).padStart(2, '0'); // Tháng trong JavaScript bắt đầu từ 0\nconst year = today.getFullYear();\n\n// Tạo một đối tượng Date đại diện cho thời gian hiện tại\nvar currentTime = new Date();\n\n// Lấy giờ hiện tại\nvar currentHour = currentTime.getHours();\n// Kiểm tra xem giờ hiện tại có lớn hơn 19h không\nif (currentHour < 19) {\n    day = parseInt(day) -1;\n}\n// Tạo chuỗi định dạng DD-MM-YYYY\nconst formattedDate = `${day}-${month}-${year}`;\n\nmsg.payload = formattedDate;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 150,
+        "y": 320,
+        "wires": [
+            [
+                "a4b51d1d4df6e695"
+            ]
+        ]
+    },
+    {
+        "id": "d2840b1bb75106f6",
+        "type": "function",
+        "z": "93fa6dbdaeec3dd2",
+        "name": "function 3",
+        "func": "msg.payload = `insert into So_xo (date,result,score) values ('${msg.payload.date}', ${msg.payload.kq_sx},1);`\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 320,
+        "wires": [
+            [
+                "fc65e09910af1395"
+            ]
+        ]
+    },
+    {
+        "id": "7bfaa1b5276d6ed6",
+        "type": "MSSQL-CN",
+        "name": "Sever DKid",
+        "server": "127.0.0.1",
+        "port": "1443",
+        "encyption": false,
+        "database": "BTL_python",
+        "requestTimeout": "",
+        "connectionTimeout": "",
+        "pool": "",
+        "poolTimeout": ""
+    }
+]
